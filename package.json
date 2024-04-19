@@ -1,0 +1,17 @@
+{
+  "name": "javascriptlmstudiotemplate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@lmstudio/sdk": "^0.0.2",
+    "puppeteer": "^22.6.5",
+    "string-strip-html": "^13.4.8"
+  }
+}
