@@ -8,7 +8,7 @@ The following technologies are used in this project:
 
 - **JavaScript**: JavaScript is used for web scraping and sending results to the local server via Puppeteer library.
 - **LMStudio**: LMStudio is an open-source platform that helps you create and manage local LLMs (Language Models). It's used here to establish a connection between the local model and the output of the web scrape results.
-- **Python**: Python serves as the main programming language for executing scripts and coordinating the 2 main components of this project which allow you to use this as a template develop the project further. The main script is named `main.py`.
+- **Python**: Python serves as the main programming language for executing scripts and coordinating the 2 main components of this project which allow you to use this as a template to develop the idea further. The main script is named `main.py`.
 
 ## How It Works
 
