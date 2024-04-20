@@ -1,4 +1,4 @@
-# Webscraper Template for LLM Model Feeding
+# Webscraper Template for LMstudio
 
 This application serves as a template for creating a web scraper using Puppeteer in JavaScript. It retrieves headlines and summaries from AlJazeera news site and outputs the data in JSON format to a file named `output.json`. The script utilizes the `LocalModel.js` file to feed the output.json file to a local LLM model hosted through a LMStudio local server instance.
 
