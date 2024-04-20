@@ -7,8 +7,8 @@ Welcome to AI News Bot! This project is a web scraper and local LLM (Language Mo
 The following technologies are used in this project:
 
 - **JavaScript**: JavaScript is used for web scraping and sending results to the local server via Puppeteer library.
-- **LMStudio**: LMStudio is an open-source platform that helps you create and manage local LLMs (Language Models). It's used here to establish a connection between the local model and our application.
-- **Python**: Python serves as the main programming language for executing scripts and coordinating all the components of this project. The main script is named `main.py`.
+- **LMStudio**: LMStudio is an open-source platform that helps you create and manage local LLMs (Language Models). It's used here to establish a connection between the local model and the output of the web scrape results.
+- **Python**: Python serves as the main programming language for executing scripts and coordinating the 2 main components of this project which allow you to use this as a template develop the project further. The main script is named `main.py`.
 
 ## How It Works
 
@@ -22,7 +22,7 @@ The following technologies are used in this project:
 
 To get started with AI News Bot, follow these steps:
 
-1. Install the necessary dependencies by running `pip install -r requirements.txt` in your terminal or command prompt.
+1. Install the necessary dependencies for Javascript using `NPM install` in the console.
 2. Set up LMStudio according to the official [installation guide](https://lmstudio.readthedocs.io/en/latest/getting_started.html). Make sure you have a local LLM model ready for use with the application.
 3. Run the main script by executing `python main.py`. This will initiate the web scraper, which will extract headlines and articles from your selected news website and process them through the local LLM model to detect possible biases.
 4. The results will be displayed on the terminal or command prompt, where you can analyze them according to your needs.
