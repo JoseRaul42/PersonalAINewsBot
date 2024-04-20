@@ -42,13 +42,13 @@ async function main() {
 
         // Print the prepared articles to the console
         console.log(systemContent);
-        console.log(`Welcome to your
+        console.log(`\x1b[31mWelcome to your
    ___  _____   _   _                    ______       _
  / _ \\|_   _| | \\ | |                   | ___ \\     | |
 / /_\\ \\ | |   |  \\| | _____      _____  | |_/ / ___ | |_
 |  _  | | |   | . \` |/ _ \\ \\ /\\ / / __| | ___ \\/ _ \\| __|
 | | | |_| |_  | |\\  |  __/\\ V  V /\\__ \\ | |_/ / (_) | |_
-\\_| |_/\\___/  \\_| \\_/\\___| \\_/\\_/ |___/ \\____/ \\___/`);
+\\_| |_/\\___/  \\_| \\_/\\___| \\_/\\_/ |___/ \\____/ \\___/\x1b[0m`);
 
         console.log('Reading the Output.json file with your LMstudio server connection...');
         // Automatically ask the model to give a brief from the provided articles
@@ -62,7 +62,7 @@ async function main() {
         for await (const text of prediction) {
             fullResponse += text;
         }
-        console.log(`AI response: ${fullResponse}`);
+        console.log(`\x1b[31mAI response: ${fullResponse}\x1b[0m`);
         console.log('Type "exit" to stop or ask another question related to the news articles.');
 
         // Continue to handle user inputs
