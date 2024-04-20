@@ -3,7 +3,7 @@ const fs = require('fs');
 const readline = require('readline');
 
 
-console.log('Reading the Output.json file with your local lmstudio server...');
+
 // Create readline interface
 const rl = readline.createInterface({
     input: process.stdin,
@@ -17,36 +17,42 @@ async function sanitizeString(str) {
 
 async function summarizeData(jsonData) {
     const cleanedHeadlines = await Promise.all(jsonData.headlines.map(sanitizeString));
-    const cleanedSummaries = await Promise.all(jsonData.summaries.map(sanitizeString));
+    const cleanedArticles = await Promise.all(jsonData.articles.map(sanitizeString));
 
-    const summary = {
+    const articles = {
         totalHeadlines: cleanedHeadlines.length,
         topHeadline: cleanedHeadlines[0],
-        totalSummaries: cleanedSummaries.length,
-        topSummary: cleanedSummaries[0]
+        totalarticles: cleanedArticles.length,
+        toparticles: cleanedArticles[0]
     };
-    return `Summary: Number of Headlines[ ${summary.totalHeadlines} ], Top headline: "${summary.topHeadline}".
-    Number of summaries [${summary.totalSummaries}], top summary: "${summary.topSummary}".`;
+    return `articles: Number of Headlines[ ${articles.totalHeadlines} ], Top headline: "${articles.topHeadline}".
+    Number of articles [${articles.totalarticles}], top articles: "${articles.toparticles}".`;
 }
 
 async function main() {
     try {
         const client = new LMStudioClient();
-        const model = await client.llm.load("TheBloke/OpenHermes-2.5-Mistral-7B-GGUF/openhermes-2.5-mistral-7b.Q6_K.gguf", {
+        const model = await client.llm.load("TheBloke/dolphin-2.2.1-mistral-7B-GGUF/dolphin-2.2.1-mistral-7b.Q6_K.gguf", {
             noHup: true
         });
 
         // Read and summarize the JSON data
-        const jsonData = JSON.parse(fs.readFileSync('output.json', 'utf8'));
+        const jsonData = JSON.parse(fs.readFileSync('C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json', 'utf8'));
         const systemContent = await summarizeData(jsonData);
 
-        // Print the prepared summary to the console
+        // Print the prepared articles to the console
         console.log(systemContent);
-        console.log('Welcome!');
-        console.log('Summarizing the top news for you...');
+        console.log(`Welcome to your
+   ___  _____   _   _                    ______       _
+ / _ \\|_   _| | \\ | |                   | ___ \\     | |
+/ /_\\ \\ | |   |  \\| | _____      _____  | |_/ / ___ | |_
+|  _  | | |   | . \` |/ _ \\ \\ /\\ / / __| | ___ \\/ _ \\| __|
+| | | |_| |_  | |\\  |  __/\\ V  V /\\__ \\ | |_/ / (_) | |_
+\\_| |_/\\___/  \\_| \\_/\\___| \\_/\\_/ |___/ \\____/ \\___/`);
 
-        // Automatically ask the model to give a brief from the provided summary
-        const inputPrompt = "Give a brief summary";
+        console.log('Reading the Output.json file with your local lmstudio server...');
+        // Automatically ask the model to give a brief from the provided articles
+        const inputPrompt = "Try to detect bias in the overall sentiment of the news articles, and where.";
         const prediction = model.respond([
             { role: "system", content: systemContent },
             { role: "user", content: inputPrompt }
@@ -57,7 +63,7 @@ async function main() {
             fullResponse += text;
         }
         console.log(`AI response: ${fullResponse}`);
-        console.log('Type "exit" to stop or ask another question related to the news summary.');
+        console.log('Type "exit" to stop or ask another question related to the news articles.');
 
         // Continue to handle user inputs
         rl.on('line', async (input) => {
