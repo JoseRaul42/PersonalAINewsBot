@@ -2,27 +2,35 @@ const fs = require('fs');
 const puppeteer = require('puppeteer');
 
 async function scrapeNewsWebsite(url, headlineSelector, summarySelector) {
-    // Launch a new browser instance
+    // Outputting initial scraping log
+    console.log('Scraping the news website...');
+
+    // Launching a new browser instance 
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    // Navigate to the desired URL
+    // Navigating to the desired URL and extracting data
     await page.goto(url);
-
-    // Extract the headlines and summaries using provided selectors
     const headlines = await page.$$eval(headlineSelector, elements => elements.map(element => element.innerText));
     const summaries = await page.$$eval(summarySelector, elements => elements.map(element => element.innerText));
 
-    // Close the browser instance
+    // Closing the browser instance once tasks are complete
     await browser.close();
 
-    // Prepare data to write to a file
+    // Preparing and writing data to a JSON file
     const data = JSON.stringify({ headlines, summaries });
-
-    // Write data to a JSON file
-    fs.writeFileSync('output.json', data);
-
+    fs.writeFileSync(`C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json`, data);
     console.log('Data has been written to output.json');
+
+    // Ensuring the process exits cleanly
+    cleanupAndExit();
+}
+
+function cleanupAndExit() {
+    console.log('Exiting the script...');
+    // Perform any cleanup here if necessary, then exit
+    // For example, closing database connections or clearing temporary files
+    process.exit();
 }
 
 async function runScrape() {
