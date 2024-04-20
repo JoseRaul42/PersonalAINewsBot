@@ -50,7 +50,7 @@ async function main() {
 | | | |_| |_  | |\\  |  __/\\ V  V /\\__ \\ | |_/ / (_) | |_
 \\_| |_/\\___/  \\_| \\_/\\___| \\_/\\_/ |___/ \\____/ \\___/`);
 
-        console.log('Reading the Output.json file with your local lmstudio server...');
+        console.log('Reading the Output.json file with your LMstudio server connection...');
         // Automatically ask the model to give a brief from the provided articles
         const inputPrompt = "Try to detect bias in the overall sentiment of the news articles, and where.";
         const prediction = model.respond([
