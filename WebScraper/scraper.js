@@ -39,6 +39,7 @@ function cleanupAndExit() {
     process.exit();
 }
 
+//Here You can Customize your search criteria by editing the website and selectors to extract any data you want.
 async function runScrape() {
     const url = 'https://aljazeera.com/';
     const headlineSelectors = [
