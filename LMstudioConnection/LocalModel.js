@@ -49,7 +49,7 @@ async function main() {
     const client = new LMStudioClient();
 
     // Load model
-    const model = await client.llm.load("TheBloke/dolphin-2.2.1-mistral-7B-GGUF/dolphin-2.2.1-mistral-7b.Q6_K.gguf", {noHup: true});
+    const model = await client.llm.load("TheBloke/Llama-2-7B-Chat-GGUF/llama-2-7b-chat.Q5_K_M.gguf", {noHup: true});
 
     // Read the JSON data
     const jsonData = JSON.parse(fs.readFileSync('C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json', 'utf8'));
@@ -70,7 +70,7 @@ async function main() {
            // console.log(systemContent) test to see what is being out put to the model
     const prediction = await model.respond([
       {role: "system", content: systemContent},
-      {role: "user", content: "Your name is AI News Bot!.Your task is to summarize the news that has been scraped off of a news website"}
+      {role: "user", content: "You are an AI News Bot Designed to help me digest large chunks of information in a few major key points. Summarize the text with the key points in this format.AI response content: The text provides updates on various global events, including:"}
     ]);
 
     if (prediction && prediction.content) {
