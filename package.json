@@ -12,6 +12,8 @@
   "dependencies": {
     "@lmstudio/sdk": "^0.0.2",
     "puppeteer": "^22.6.5",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "string-strip-html": "^13.4.8"
   }
 }

@@ -1,29 +1,29 @@
 const fs = require('fs');
 const puppeteer = require('puppeteer');
 
-async function scrapeNewsWebsite(url, headlineSelectors, summarySelector) {
-    console.log('Scraping the news website...');
+async function scrapeWholeWebpage(url) {
+    console.log('Scraping the entire webpage for text content and links...');
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
     try {
-        await page.goto(url);
+        await page.goto(url, { waitUntil: 'networkidle2' });
 
-        // Collect headlines from multiple selectors
-        let headlines = [];
-        for (const selector of headlineSelectors) {
-            await page.waitForSelector(selector); // Ensure the selectors exist on the page
-            const result = await page.$$eval(selector, elements => elements.map(element => element.innerText));
-            console.log(`Results for selector "${selector}":`, result.length); // Debug output
-            headlines = headlines.concat(result);
-        }
-        console.log("Total headlines collected:", headlines.length); // Debug output
-        // Collect summaries from a single selector
-        const articles = await page.$$eval(summarySelector, elements => elements.map(element => element.innerText));
+        // Get the page title
+        const pageTitle = await page.title();
+        
+        // Extracting text from the body of the webpage
+        const pageText = await page.evaluate(() => document.body.innerText);
+
+        // Extracting all href links from the page
+        const links = await page.evaluate(() => {
+            const anchorElements = Array.from(document.querySelectorAll('a'));
+            return anchorElements.map(element => element.href).filter(href => href);
+        });
 
         // Preparing and writing data to a JSON file
-        const data = JSON.stringify({ headlines, articles });
-        fs.writeFileSync(`C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json`, data);
+        const data = JSON.stringify({ title: pageTitle, content: pageText, links });
+        fs.writeFileSync('C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json', data);
         console.log('Data has been written to output.json');
     } catch (error) {
         console.error('Error during scraping:', error);
@@ -39,16 +39,10 @@ function cleanupAndExit() {
     process.exit();
 }
 
-//Here You can Customize your search criteria by editing the website and selectors to extract any data you want.
-async function runScrape() {
-    const url = 'https://aljazeera.com/';
-    const headlineSelectors = [
-        '#featured-news-container > div > article > div.article-card__liveblog-content.article-card__liveblog-featured-content.u-clickable-card__exclude > a',
-        '#featured-news-container > div > article > div.article-card__liveblog-content.article-card__liveblog-featured-content.u-clickable-card__exclude > ul > li:nth-child(1) > div.liveblog-timeline__update-details > a',
-        '#featured-news-container > div > article > div.article-card__liveblog-content.article-card__liveblog-featured-content.u-clickable-card__exclude > ul > li:nth-child(5) > div.liveblog-timeline__update-details > a'
-    ];
-    const articleSelector = '#featured-news-container > div > ul > li:nth-child(1) > article.article-card.article-card-home-page.article-card--medium.article-card--type-post.u-clickable-card.article-card--with-image > div.article-card__content-wrap.article-card__content-wrap--start-image > a';
-    await scrapeNewsWebsite(url, headlineSelectors, articleSelector);
+// Customize your specific webpage here
+async function runWholePageScrape() {
+    const url = 'https://www.nytimes.com/';
+    await scrapeWholeWebpage(url);
 }
 
-runScrape();
+runWholePageScrape();
