@@ -23,7 +23,7 @@ async function scrapeNewsWebsite(url, headlineSelectors, summarySelector) {
 
         // Preparing and writing data to a JSON file
         const data = JSON.stringify({ headlines, articles });
-        fs.writeFileSync(`C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json`, data);
+        fs.writeFileSync(`C:\\Users\\ CHANGE THIS TO YOUR PATH\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json`, data);
         console.log('Data has been written to output.json');
     } catch (error) {
         console.error('Error during scraping:', error);
