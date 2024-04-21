@@ -1,6 +1,6 @@
 # AI News Bot: Web Scraper & Local LLM
 
-Welcome to AI News Bot! This project is a web scraper and local LLM (Language Model) tool designed to help you extract headlines and articles from news websites and detect possible biases in the content.
+Welcome to AI News Bot! This project is a web scraper and local LLM (Language Model) tool designed to help you extract headlines and articles from news websites this can be an easy way to automate researching all the latest news. it is also an easy way to test different llm models quickly.
 
 ## Tech Stack
 
