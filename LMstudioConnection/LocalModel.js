@@ -65,12 +65,12 @@ async function main() {
      / /_\\ \\ | |   |  \\| | _____      _____  | |_/ / ___ | |_
      |  _  | | |   | . \` |/ _ \\ \\ /\\ / / __| | ___ \\/ _ \\| __|
      | | | |_| |_  | |\\  |  __/\\ V  V /\\__ \\ | |_/ / (_) | |_
-     \\_| |_/\\___/  \\_| \\_/\\___| \\_/\\_/ |___/ \\____/ \\___/\\____/\x1b[0m`);
+     \\_| |_/\\___/  \\_| \\_/\\___| \\_/\\_/ |___/ \\____/ \\___/\\____/ By Jose Raul Valois\x1b[0m`);
              console.log('Reading the Output.json file with your LMstudio server connection...');
            // console.log(systemContent) test to see what is being out put to the model
     const prediction = await model.respond([
       {role: "system", content: systemContent},
-      {role: "user", content: "You are an AI News Bot Designed to help me digest large chunks of information in a few major key points. Summarize the text with the key points in this format.AI response content: The text provides updates on various global events, including:"}
+      {role: "user", content: "You are an AI News Bot Designed to help me digest large chunks of information in a few major key points. Summarize the text with the key points in this format.EXAMPLE 'The text provides updates on various global events, including:'"}
     ]);
 
     if (prediction && prediction.content) {
