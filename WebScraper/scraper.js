@@ -12,12 +12,14 @@ async function scrapeWholeWebpage(url) {
 
     try {
         // Attempt to navigate to the page with timeout handling
-        await page.goto(url, { waitUntil: 'networkidle0'});
+        await page.goto(url, { waitUntil: 'networkidle0' });
 
         const pageTitle = await page.title() || "Title not found"; // Default if no title
         const pageText = await page.evaluate(() => document.body.innerText) || "No content available"; // Default if text can't be retrieved
-        const links = await page.evaluate(() => 
-            Array.from(document.querySelectorAll('a'), a => a.href) || []); // Default to empty array if no links
+        const links = await page.evaluate(() => {
+            const anchorElements = Array.from(document.querySelectorAll('a'));
+            return anchorElements.map(element => element.href).filter(href => href.startsWith('http://') || href.startsWith('https://'));
+        });
 
         console.log(`Data for ${url} has been successfully scraped.`);
         return { title: pageTitle, content: pageText, links };
@@ -30,16 +32,18 @@ async function scrapeWholeWebpage(url) {
 }
 
 async function runWholePageScrape() {
-    const urls = ['https://apnews.com/', 'https://www.npr.org/', 'https://www.reuters.com/world/'];
+    const urls = ['https://www.aljazeera.com', 'https://nytimes.com', 'https://news.sky.com/world'];
     try {
         const results = await Promise.all(urls.map(url => scrapeWholeWebpage(url)));
 
         const titles = results.map(result => result.title).join(" | ");
         const contents = results.map(result => result.content).join("\n\n\n---\n\n\n");
+        const allLinks = results.flatMap(result => result.links);
 
         const data = {
             titles: titles,
-            content: contents
+            content: contents,
+            links: allLinks
         };
 
         fs.writeFileSync('C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json', JSON.stringify(data, null, 4));
