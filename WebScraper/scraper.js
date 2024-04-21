@@ -1,48 +1,52 @@
 const fs = require('fs');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+
+// Apply the stealth plugin to avoid being detected as a bot
+puppeteer.use(StealthPlugin());
 
 async function scrapeWholeWebpage(url) {
-    console.log('Scraping the entire webpage for text content and links...');
-    const browser = await puppeteer.launch();
+    console.log(`Scraping the webpage: ${url}`);
+    const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
 
     try {
-        await page.goto(url, { waitUntil: 'networkidle2' });
+        // Attempt to navigate to the page with timeout handling
+        await page.goto(url, { waitUntil: 'networkidle0'});
 
-        // Get the page title
-        const pageTitle = await page.title();
-        
-        // Extracting text from the body of the webpage
-        const pageText = await page.evaluate(() => document.body.innerText);
+        const pageTitle = await page.title() || "Title not found"; // Default if no title
+        const pageText = await page.evaluate(() => document.body.innerText) || "No content available"; // Default if text can't be retrieved
+        const links = await page.evaluate(() => 
+            Array.from(document.querySelectorAll('a'), a => a.href) || []); // Default to empty array if no links
 
-        // Extracting all href links from the page
-        const links = await page.evaluate(() => {
-            const anchorElements = Array.from(document.querySelectorAll('a'));
-            return anchorElements.map(element => element.href).filter(href => href);
-        });
-
-        // Preparing and writing data to a JSON file
-        const data = JSON.stringify({ title: pageTitle, content: pageText, links });
-        fs.writeFileSync('C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json', data);
-        console.log('Data has been written to output.json');
+        console.log(`Data for ${url} has been successfully scraped.`);
+        return { title: pageTitle, content: pageText, links };
     } catch (error) {
-        console.error('Error during scraping:', error);
+        console.error(`Error during scraping ${url}:`, error);
+        return { title: `Failed to load ${url}`, content: error.message, links: [] }; // Return default error structure
     } finally {
-        // Clean-up
         await browser.close();
-        cleanupAndExit();
     }
 }
 
-function cleanupAndExit() {
-    console.log('Exiting the script...');
-    process.exit();
-}
-
-// Customize your specific webpage here
 async function runWholePageScrape() {
-    const url = 'https://www.nytimes.com/';
-    await scrapeWholeWebpage(url);
+    const urls = ['https://apnews.com/', 'https://www.npr.org/', 'https://www.reuters.com/world/'];
+    try {
+        const results = await Promise.all(urls.map(url => scrapeWholeWebpage(url)));
+
+        const titles = results.map(result => result.title).join(" | ");
+        const contents = results.map(result => result.content).join("\n\n\n---\n\n\n");
+
+        const data = {
+            titles: titles,
+            content: contents
+        };
+
+        fs.writeFileSync('C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json', JSON.stringify(data, null, 4));
+        console.log('Completed scraping all websites. Data has been written to output.json');
+    } catch (error) {
+        console.error('An error occurred during the scraping process:', error);
+    }
 }
 
 runWholePageScrape();
