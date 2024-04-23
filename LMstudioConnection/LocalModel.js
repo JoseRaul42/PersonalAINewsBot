@@ -1,64 +1,51 @@
 const { LMStudioClient } = require("@lmstudio/sdk");
 const fs = require('fs');
 const readline = require('readline');
+const nlp = require('compromise');  // Import compromise
+const Tokenizer = require('nlp-tokenizer');
+const stopword = require('stopword');  // Import the stopword module
+var natural = require("natural"); 
 
-// Create readline interface
+// Setup reading line interface
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-// Function to sanitize string by removing soft hyphens and normalizing
-async function sanitizeString(str) {
-  // Strip only dangerous characters, retain punctuation
-  return str.replace(/[^\w\s.,;!?']/gi, '');
-}
-
-// Function to summarize JSON data
-async function summarizeData(jsonData) {
-  const title = jsonData.title;
-  const rawContentLines = jsonData.content.split('\n');
-
-  //console.log("All Content Lines Split:", rawContentLines);
-
-  // Consider expanding the filter criteria to capture more relevant data
-  const newsItems = rawContentLines.filter(line => 
-    line.includes('ago') || 
-    line.includes('LIVE UPDATES') ||
-    line.includes('BREAKING')
-  );
-
-  //console.log("Filtered News Items:", newsItems);
-
-  const cleanedItems = await Promise.all(newsItems.map(sanitizeString));
-
-  console.log("Sanitized News Items:", cleanedItems);
-
-  const contentSummary = cleanedItems.join('. ');
-  const numberOfLinks = jsonData.links.length;
-
-  return {
-    title: title,
-    contentSummary: contentSummary,
-    numberOfLinks: numberOfLinks
-  };
-}
-
 async function main() {
   try {
-    const client = new LMStudioClient();
+      const client = new LMStudioClient();
+      const model = await client.llm.load("lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF/Meta-Llama-3-8B-Instruct-Q5_K_M.gguf");
+      
+      console.log("Reading the RawData.json file");
+      // Read the JSON data
+      const jsonData = JSON.parse(fs.readFileSync('C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\RawData.json', 'utf8'));
+  
+      // Apply NLP processing using compromise
+      const doc = nlp(jsonData.content);
+      doc.normalize(); // normalize the text
+  
+      // Ensure we're passing a string to the tokenizer
+      let rawText = doc.text() || ''; // Ensure there's a default empty string if nothing is returned
+      //console.log("rawText"+ rawText);
+      const tokenizer = new natural.WordTokenizer(); // Instantiate the tokenizer
 
-    // Load model
-    const model = await client.llm.load("lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF/Meta-Llama-3-8B-Instruct-Q5_K_M.gguf"); //, {noHup: true});
+      // rawText = rawText.replace(/,/g, '');
+     // console.log("tokenizer" + tokenizer.tokenize(rawText))
+      let tokens = tokenizer.tokenize(rawText)
 
-    // Read the JSON data
-    const jsonData = JSON.parse(fs.readFileSync('C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json', 'utf8'));
     
-    //console.log("Full JSON Content:", jsonData.content);
+      // Remove stopwords, ensuring all tokens are valid strings
+      const filteredTokens = stopword.removeStopwords(tokens); // Use the stopword module to filter tokens
+  
+  
+      // Rebuild the text with cleaned tokens
+      const systemContent = filteredTokens.join('').toLowerCase();
+      // TESTING PURPOconsole.log("SYS prompt"+systemContent);
+
+  
 
     // Generate summary from the JSON data
-    const systemContent = jsonData.content;
-    console.log(`Number of characters in the summarized content: ${systemContent.length}`);
     console.log(`\x1b[31mWelcome to your
         ___  _____   _   _                    ______       _
       / _ \\|_   _| | \\ | |                   | ___ \\     | |
@@ -66,48 +53,51 @@ async function main() {
      |  _  | | |   | . \` |/ _ \\ \\ /\\ / / __| | ___ \\/ _ \\| __|
      | | | |_| |_  | |\\  |  __/\\ V  V /\\__ \\ | |_/ / (_) | |_
      \\_| |_/\\___/  \\_| \\_/\\___| \\_/\\_/ |___/ \\____/ \\___/\\____/ By Jose Raul Valois\x1b[0m`);
-             console.log('Reading the Output.json file with your LMstudio server connection...');
-           // console.log(systemContent) test to see what is being out put to the model
-    const prediction = await model.respond([
-      {role: "system", content: systemContent},
-      {role: "user", content: "You are an AI News Bot Designed to help me digest large chunks of information in a few major key points. Summarize the text with the key points in this format.EXAMPLE 'The text provides updates on various global events, including:'"}
-    ]);
+             console.log()
+             console.log(`Number of characters in the summarized content: ${systemContent.length}`);
+      console.log(`Waiting on response from LMstudio`);
 
-    if (prediction && prediction.content) {
-      console.log(`\x1b[31mAI response content: ${prediction.content}\x1b[0m`);
-    } else {
-      console.error('Error: No content found in the AI response.');
-    }
+      const prediction = await model.respond([
+          { role: "system", content: systemContent },
+          { role: "user", content: "You are an AI News Bot Designed to help me digest large chunks of information in a few major key points. Identify major news events as key events in this format.EXAMPLE 'The text provides updates on various global events, including:[summarized key points of data]+[Cited Source]+[Date]'" }
+      ]);
 
-    console.log('Type "exit" to stop or ask another question related to the news articles.');
-
-     // Continue to handle user inputs
-        rl.on('line', async (input) => {
-            if (input.toLowerCase() === 'exit') {
-                console.log('Exiting the AI assistant...');
-                rl.close();
-            } else {
-                try {
-                    const followup = await model.respond([
-                        { role: "system", content: systemContent }, // Ensure content here matches expected structure
-                        { role: "user", content: input }
-                    ]);
-                    
-                    if (followup && followup.content) {
-                        console.log(`\x1b[31mAI follow-up response: ${followup.content}\x1b[0m`); // Adjust per actual response structure
-                    } else {
-                        console.error('Follow-up error: No content found in the AI response.');
-                    }
-                    console.log('Type "exit" to stop or ask another question.');
-                } catch (error) {
-                    console.error('Error handling follow-up:', error);
-                }
-            }
-        });
-    } catch (error) {
-        console.error('Error:', error);
-        rl.close();
-    }
-}
-
-main();
+  
+      if (prediction && prediction.content) {
+        console.log(`\x1b[31mAI response content: ${prediction.content}\x1b[0m`);
+      } else {
+        console.error('Error: No content found in the AI response.');
+      }
+  
+      console.log('Type "exit" to stop or ask another question related to the news articles.');
+  
+       // Continue to handle user inputs
+          rl.on('line', async (input) => {
+              if (input.toLowerCase() === 'exit') {
+                  console.log('Exiting the AI assistant...');
+                  rl.close();
+              } else {
+                  try {
+                      const followup = await model.respond([
+                          { role: "system", content: systemContent }, // Ensure content here matches expected structure
+                          { role: "user", content: input }
+                      ]);
+                      
+                      if (followup && followup.content) {
+                          console.log(`\x1b[31mAI follow-up response: ${followup.content}\x1b[0m`); // Adjust per actual response structure
+                      } else {
+                          console.error('Follow-up error: No content found in the AI response.');
+                      }
+                      console.log('Type "exit" to stop or ask another question.');
+                  } catch (error) {
+                      console.error('Error handling follow-up:', error);
+                  }
+              }
+          });
+      } catch (error) {
+          console.error('Error:', error);
+          rl.close();
+      }
+  }
+  
+  main();
