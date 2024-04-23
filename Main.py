@@ -29,3 +29,7 @@ if __name__ == "__main__":
     check_node_installed()  # Ensure Node.js is available
     run_script(r'C:\Users\Afro\Projects\JavascriptLMstudioTemplate\WebScraper\scraper.js')
     run_script2(r'C:\Users\Afro\Projects\JavascriptLMstudioTemplate\LMstudioConnection\LocalModel.js')
+    
+    
+    
+    

@@ -32,7 +32,7 @@ async function scrapeWholeWebpage(url) {
 }
 
 async function runWholePageScrape() {
-    const urls = ['https://www.aljazeera.com', 'https://nytimes.com', 'https://news.sky.com/world'];
+    const urls = ['https://www.aljazeera.com', 'https://nytimes.com', 'https://news.sky.com','https://www.houstonchronicle.com','https://www.cnn.com','https://www.npr.com'];
     try {
         const results = await Promise.all(urls.map(url => scrapeWholeWebpage(url)));
 
@@ -46,7 +46,7 @@ async function runWholePageScrape() {
             links: allLinks
         };
 
-        fs.writeFileSync('C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json', JSON.stringify(data, null, 4));
+        fs.writeFileSync('C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\RawData.json', JSON.stringify(data, null, 4));
         console.log('Completed scraping all websites. Data has been written to output.json');
     } catch (error) {
         console.error('An error occurred during the scraping process:', error);

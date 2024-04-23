@@ -12,9 +12,15 @@
   "dependencies": {
     "@lmstudio/sdk": "^0.0.2",
     "axios": "^1.6.8",
+    "compromise": "^14.13.0",
+    "lemmer": "^0.3.0",
+    "natural": "^7.0.5",
+    "nlp-tokenizer": "^1.0.0",
+    "node-nlp": "^4.27.0",
     "puppeteer": "^22.6.5",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "stopword": "^3.0.1",
     "string-strip-html": "^13.4.8"
   }
 }
