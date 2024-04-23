@@ -49,7 +49,7 @@ async function main() {
     const client = new LMStudioClient();
 
     // Load model
-    const model = await client.llm.load("TheBloke/Llama-2-7B-Chat-GGUF/llama-2-7b-chat.Q4_K_M.gguf", {noHup: true});
+    const model = await client.llm.load("lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF/Meta-Llama-3-8B-Instruct-Q5_K_M.gguf"); //, {noHup: true});
 
     // Read the JSON data
     const jsonData = JSON.parse(fs.readFileSync('C:\\Users\\Afro\\Projects\\JavascriptLMstudioTemplate\\LMstudioConnection\\output.json', 'utf8'));

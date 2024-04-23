@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@lmstudio/sdk": "^0.0.2",
+    "axios": "^1.6.8",
     "puppeteer": "^22.6.5",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
